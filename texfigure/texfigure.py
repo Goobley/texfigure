@@ -57,11 +57,11 @@ class Figure(object):
         (Default ``Figure reference``)
 
     label : `str`
-        The latex label assigned to the figure envrionment, will be prefixed
+        The latex label assigned to the figure environment, will be prefixed
         with ``'Fig``. (Default ``Fig:reference``)
 
     placement : `str`
-        The figure envrionment placement value. (Default ``h``)
+        The figure environment placement value. (Default ``ht``)
 
     figure_env_name : `str`
         The string used for the figure environment i.e. ``\begin{figure}``.
@@ -141,7 +141,7 @@ class Figure(object):
         self.caption = "Figure {}".format(self.reference)
         self.short_caption = None
         self.label = "Fig:{}".format(self.reference)
-        self.placement = 'h'
+        self.placement = 'ht'
         self.figure_env_name = "figure"
         self.figure_width = r'0.95\columnwidth'
         self.subfig_width = r'0.45\columnwidth'
@@ -238,11 +238,11 @@ class MultiFigure(Sequence):
         (Default ``Figure reference``)
 
     label : `str`
-        The latex label assigned to the figure envrionment.
+        The latex label assigned to the figure environment.
         (Default ``Fig:reference``)
 
     placement : `str`
-        The figure envrionment placement value. (Default ``h``)
+        The figure environment placement value. (Default ``h``)
 
     frontmatter : `str`
         LaTeX code included in the first line of the figure environment.
