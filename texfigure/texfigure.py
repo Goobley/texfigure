@@ -57,8 +57,8 @@ class Figure(object):
         (Default ``Figure reference``)
 
     label : `str`
-        The latex label assigned to the figure envrionment, will bre prefixed
-        with ``'fig``. (Default ``fig:reference``)
+        The latex label assigned to the figure envrionment, will be prefixed
+        with ``'Fig``. (Default ``Fig:reference``)
 
     placement : `str`
         The figure envrionment placement value. (Default ``h``)
@@ -112,7 +112,7 @@ class Figure(object):
 \begin{{{figure_env_name}}}[{placement}]
     \centering
     {myfig}
-    \caption{{{caption}}}
+    \caption[{short_caption}]{{{caption}}}
     \label{{{label}}}
 \end{{{figure_env_name}}}
 """
@@ -139,7 +139,8 @@ class Figure(object):
         self.base_dir = os.path.dirname(file_name) + '/'
 
         self.caption = "Figure {}".format(self.reference)
-        self.label = "fig:{}".format(self.reference)
+        self.short_caption = None
+        self.label = "Fig:{}".format(self.reference)
         self.placement = 'h'
         self.figure_env_name = "figure"
         self.figure_width = r'0.95\columnwidth'
@@ -189,7 +190,10 @@ class Figure(object):
 
         myfig = self.extension_mapping[self.extension]()
 
-        return self.fig_str.format(myfig=myfig, **default_kwargs)
+        default_kwargs['short_caption'] = self.short_caption if self.short_caption else self.caption
+
+        result =  self.fig_str.format(myfig=myfig, **default_kwargs)
+        return result
 
     def repr_subfigure(self):
         """
@@ -235,7 +239,7 @@ class MultiFigure(Sequence):
 
     label : `str`
         The latex label assigned to the figure envrionment.
-        (Default ``fig:reference``)
+        (Default ``Fig:reference``)
 
     placement : `str`
         The figure envrionment placement value. (Default ``h``)
@@ -283,7 +287,7 @@ class MultiFigure(Sequence):
         self.reference = reference
 
         self.caption = "MultiFigure {}".format(self.reference)
-        self.label = "fig:{}".format(self.reference)
+        self.label = "Fig:{}".format(self.reference)
         self.placement = 'H'
         self.frontmatter = '\centering'
         if continuation:
@@ -505,21 +509,30 @@ class Manager(object):
         """
         return self._number
 
-    def data_file(self, file_name):
+    def data_file(self, file_name, add_to_deps=True):
         """
-        Get the full path of a data file in this chapters data directory,
-        add it to the pytex tracked files.
+        Get the full path of a data file in this chapters data directory, add it
+        to the pytex tracked files. Folders/directories can't be tracked
+        directly so aren't added to the list.
 
         Parameters
         ----------
         file_name : `str`
             The filename in the data directory
+
+        add_to_deps: `bool`, optional
+            Whether to add to pytex tracked files. In most cases this is fine,
+            but if what is requested is a bit weird, then pytex can't track
+            it, and latexmk will struggle. In that case, set to False. Default:
+            True
         """
 
         fpattern = os.path.join(self.data_dir, file_name)
         fpaths = glob.glob(fpattern)
-        for fpath in fpaths:
-            self.pytex.add_dependencies(fpath)
+        if add_to_deps:
+            for fpath in fpaths:
+                if not os.path.isdir(fpath):
+                    self.pytex.add_dependencies(fpath)
 
         if not fpaths:
             raise ValueError("No files found matching this name or pattern.")
@@ -535,7 +548,7 @@ class Manager(object):
         Parameters
         ----------
         ref : `str`
-            The latex reference for this figure (excluding 'fig:')
+            The latex reference for this figure (excluding 'Fig:')
         fname : `str`
             Overwrite the default file name template with this name.
 
@@ -597,7 +610,7 @@ class Manager(object):
         Parameters
         ----------
         ref : `str`
-            The latex reference for this figure (excluding 'fig:')
+            The latex reference for this figure (excluding 'Fig:')
 
         Fig : `texfigure.Figure`
             The `~texfigure.Figure` object to add to the manager.
