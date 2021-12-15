@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 import os
 import sys
 import glob
@@ -61,7 +60,7 @@ class Figure(object):
         with ``'Fig``. (Default ``Fig:reference``)
 
     placement : `str`
-        The figure environment placement value. (Default ``ht``)
+        The figure environment placement value. (Default ``htb``)
 
     figure_env_name : `str`
         The string used for the figure environment i.e. ``\begin{figure}``.
@@ -141,7 +140,7 @@ class Figure(object):
         self.caption = "Figure {}".format(self.reference)
         self.short_caption = None
         self.label = "Fig:{}".format(self.reference)
-        self.placement = 'ht'
+        self.placement = 'htb'
         self.figure_env_name = "figure"
         self.figure_width = r'0.95\columnwidth'
         self.subfig_width = r'0.45\columnwidth'
